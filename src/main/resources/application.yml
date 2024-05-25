@@ -1,0 +1,9 @@
+app:
+  host: http://localhost:8080
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            ServletContextRequestLoggingFilter: DEBUG

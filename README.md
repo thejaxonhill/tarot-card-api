@@ -1,2 +1,2 @@
-# tarot-card-api
-This project is a Java Spring Boot web server that serves up Tarot Card information and images.
+# Tarot Card API
+This project is a Java Spring Boot web server that for Tarot Card information and images.
