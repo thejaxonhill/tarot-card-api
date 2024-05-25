@@ -52,7 +52,7 @@ public class TarotCardController {
 
     @GetMapping(value = "/drawCards")
     public Flux<TarotCard> drawCards(
-            @RequestParam(value = "amount", defaultValue = "3", required = false) Long amount,
+            @RequestParam(value = "amount", required = false) Long amount,
             @RequestParam(value = "alreadyDrawn", required = false) List<Integer> alreadyDrawn) {
         return drawTarotCard.drawCards(amount, alreadyDrawn);
     }

@@ -3,6 +3,7 @@ package io.github.thejaxonhill.tarotapi.usecase;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -27,9 +28,7 @@ public class DrawTarotCard {
                 .toList());
         Collections.shuffle(deck);
 
-        return Flux.fromStream(amountToDraw != null && amountToDraw > 0
-                ? deck.stream().limit(amountToDraw)
-                : deck.stream());
+        return Flux.fromStream(deck.stream().limit(amountToDraw != null && amountToDraw > 0 ? amountToDraw : 3L));
     }
 
 }
