@@ -48,4 +48,9 @@ public class TarotCardControllerTest {
         webTestClient.get().uri("/api/v1/cards/drawCards").exchange().expectStatus().isOk();
     }
 
+    @Test
+    void givenFilename_whenGetImage_thenOk() throws Exception {
+        webTestClient.get().uri("/api/v1/cards/image/aceofcoins.jpg").exchange().expectStatus().isOk();
+    }
+
 }
