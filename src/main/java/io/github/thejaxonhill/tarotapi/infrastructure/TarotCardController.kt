@@ -3,7 +3,6 @@ package io.github.thejaxonhill.tarotapi.infrastructure
 import io.github.thejaxonhill.tarotapi.AppEnv
 import io.github.thejaxonhill.tarotapi.application.usecase.*
 import io.github.thejaxonhill.tarotapi.domain.TarotCard
-import lombok.RequiredArgsConstructor
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -12,7 +11,6 @@ import java.io.IOException
 import java.util.Locale.getDefault
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping(value = ["/api/v1/cards"])
 class TarotCardController (
     private val appEnv: AppEnv,
@@ -23,8 +21,15 @@ class TarotCardController (
     private val loadTarotCardImage: LoadTarotCardImage,
 ) {
     @GetMapping
-    fun getAllCards(): ResponseEntity<List<TarotCardView>> =
-        loadTarotCards.load().map { it.toView() }.toResponseEntity()
+    fun getCards(
+        @RequestParam(required = false, defaultValue = "0") page: Int,
+        @RequestParam(required = false, defaultValue = "10") size: Int,
+    ): ResponseEntity<Page<TarotCardView>> {
+        return loadTarotCards.load(page, size)
+            .map { it.toView() }
+            .let { Page(it, page, size) }
+            .toResponseEntity()
+    }
 
     @GetMapping(value = ["/{id}"])
     fun getCard(@PathVariable id: Int): ResponseEntity<TarotCardView> {
@@ -33,19 +38,18 @@ class TarotCardController (
 
     @GetMapping(value = ["/draw-card"])
     fun drawCard(
-        @RequestParam(value = "alreadyDrawn", required = false) alreadyDrawn: List<Int>
-    ): ResponseEntity<TarotCardView> = drawTarotCard.draw(alreadyDrawn).toView().toResponseEntity()
+        @RequestParam(value = "alreadyDrawn", required = false, defaultValue = "") alreadyDrawn: List<Int>
+    ): ResponseEntity<TarotCardView> =
+        drawTarotCard.draw(alreadyDrawn).toView().toResponseEntity()
 
     @GetMapping(value = ["/draw-cards"])
     fun drawCards(
-        @RequestParam(value = "amount", required = false) amount: Int = 3,
-        @RequestParam(value = "alreadyDrawn", required = false) alreadyDrawn: List<Int> = emptyList()
-    ): ResponseEntity<List<TarotCardView>> {
-        return drawTarotCards.draw(amount, alreadyDrawn).map { it.toView() }.toResponseEntity()
-    }
+        @RequestParam(value = "amount", required = false, defaultValue = "3") amount: Int,
+        @RequestParam(value = "alreadyDrawn", required = false, defaultValue = "") alreadyDrawn: List<Int>
+    ): ResponseEntity<List<TarotCardView>> =
+        drawTarotCards.draw(amount, alreadyDrawn).map { it.toView() }.toResponseEntity()
 
-    @GetMapping(value = ["/image/{filename}.jpg"])
-    @Throws(IOException::class)
+    @GetMapping(value = ["/{filename}.jpg"])
     fun getImage(@PathVariable filename: String): ResponseEntity<ByteArrayResource> {
         val bytes = loadTarotCardImage.load(filename)
         return ResponseEntity.ok()
@@ -70,6 +74,12 @@ class TarotCardController (
 }
 
 private fun <T : Any> T.toResponseEntity() = ResponseEntity.ok(this)
+
+data class Page<T>(
+    val content: List<T>,
+    val page: Int?,
+    val size: Int?,
+)
 
 data class TarotCardView(
     val id: Int? = null,
