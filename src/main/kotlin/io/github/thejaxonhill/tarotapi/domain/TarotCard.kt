@@ -1,6 +1,6 @@
 package io.github.thejaxonhill.tarotapi.domain
 
-class TarotCard (
+class TarotCard(
     val id: Int,
     val type: String,
     val shortName: String,

@@ -7,12 +7,11 @@ import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.io.IOException
 import java.util.Locale.getDefault
 
 @RestController
 @RequestMapping(value = ["/api/v1/cards"])
-class TarotCardController (
+class TarotCardController(
     private val appEnv: AppEnv,
     private val drawTarotCard: DrawTarotCard,
     private val drawTarotCards: DrawTarotCards,

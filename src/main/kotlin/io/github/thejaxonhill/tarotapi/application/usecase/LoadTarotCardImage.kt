@@ -5,6 +5,6 @@ import io.github.thejaxonhill.tarotapi.application.stereotype.UseCase
 
 @UseCase
 class LoadTarotCardImage(private val tarotCardImageProvider: TarotCardImageProvider) {
-    fun load(filename: String) = tarotCardImageProvider.getImage(filename) ?:
-    throw NoSuchElementException("$filename.jpg not found.")
+    fun load(filename: String) =
+        tarotCardImageProvider.getImage(filename) ?: throw NoSuchElementException("$filename.jpg not found.")
 }
